@@ -27,7 +27,7 @@ public class Solver {
             if (zeros != 0){
                 zeros=0;
 
-                //Checks if puzzle element needs solved, otherwise add to basepuzzle.
+                //Checks if puzzle element needs solved, otherwise add to basepuzzle
                 for (puzzleElement=0; puzzleElement < sudokuSize; puzzleElement++){
                     if (unsolved[puzzleNum][puzzleElement] == 0){
                         basepuzzle[puzzleNum][puzzleElement] = 0;
