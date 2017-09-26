@@ -12,6 +12,7 @@ public class ReadFile {
         path = file_path;
     }
 
+    //Read file passed from main and return data in 2d array [puzzle number][puzzle data].
     public int[][] OpenFile() throws IOException {
         FileReader fileread = new FileReader(path);
         BufferedReader textreader = new BufferedReader(fileread);
@@ -22,11 +23,9 @@ public class ReadFile {
         String header = "grid";
         String[] textData = new String[numberOfLines];
         int[][] sudokuData = new int[noPuzzles][sudokuSize];
-
         int i,j;
         int a=-1;
         int b=0;
-
 
         for (i=0; i < numberOfLines; i++){
             textData[i] = textreader.readLine();
@@ -44,11 +43,11 @@ public class ReadFile {
                 }
             }
         }
-
         textreader.close();
         return sudokuData;
     }
 
+    //Return total lines read from file.
     private int readLines() throws IOException{
         FileReader fr = new FileReader(path);
         BufferedReader bf = new BufferedReader(fr);

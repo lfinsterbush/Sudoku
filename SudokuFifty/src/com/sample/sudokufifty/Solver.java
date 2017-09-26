@@ -4,84 +4,92 @@ public class Solver {
 
     private int[][] unsolved;
     private int[][] basepuzzle = new int[50][81];
-    private int j = 0;
+    private int puzzleNum = 0;
+    private int sudokuSize = 81;
+    private int TotalPuzzles = 50;
 
     public Solver(int[][] solved){
         unsolved = solved;
     }
 
     public int[][] SolvePuzzle(){
-        int i,k;
+        int oneToNine,puzzleElement;
         int zeros = 0;
 
-        while (j < 50) {
-            for (i = 0; i < 81; i++){
-                if (unsolved[j][i] == 0) {
+        //Check if puzzle is solved by checking for 0 placeholder found in each puzzle.
+        //If no zeros found, move to next puzzle.
+        while (puzzleNum < TotalPuzzles) {
+            for (int i = 0; i < sudokuSize; i++){
+                if (unsolved[puzzleNum][i] == 0) {
                         zeros++;
                 }
             }
             if (zeros != 0){
                 zeros=0;
 
-                for (k=0; k < 81; k++){
-                    if (unsolved[j][k] == 0){
-                        basepuzzle[j][k] = 0;
+                //Checks if puzzle element needs solved, otherwise add to basepuzzle.
+                for (puzzleElement=0; puzzleElement < sudokuSize; puzzleElement++){
+                    if (unsolved[puzzleNum][puzzleElement] == 0){
+                        basepuzzle[puzzleNum][puzzleElement] = 0;
 
-                        for (i=1; i <10; i++){
-                            if (valid(k,i) && unsolved[j][k] != i){
-                                unsolved[j][k] = i;
-                                i=9;
-                            } else if (i==9){
-                                unsolved[j][k]=0;
-                                k--;
-                                while(basepuzzle[j][k] != 0){
-                                    k--;
+                        //Try a value from 1 to 9 for current location, then checks if valid.
+                        for (oneToNine=1; oneToNine <10; oneToNine++){
+                            if (Valid(puzzleElement,oneToNine) && unsolved[puzzleNum][puzzleElement] != oneToNine){
+                                unsolved[puzzleNum][puzzleElement] = oneToNine;
+                                oneToNine=9;
+
+                                //Backtracking if no valid solution found. Skips back further if found to be apart
+                                //of basepuzzle. Set oneToNine to value of backtracked element to try next available.
+                            } else if (oneToNine==9){
+                                unsolved[puzzleNum][puzzleElement]=0;
+                                puzzleElement--;
+                                while(basepuzzle[puzzleNum][puzzleElement] != 0){
+                                    puzzleElement--;
                                 }
-                                i=unsolved[j][k]-1;
-
-
+                                oneToNine=unsolved[puzzleNum][puzzleElement]-1;
                             }
-
-
                         }
-
                     } else {
-                        basepuzzle[j][k] = unsolved[j][k];
+                        basepuzzle[puzzleNum][puzzleElement] = unsolved[puzzleNum][puzzleElement];
                     }
                 }
             }
             else{
-                j++;
+                puzzleNum++;
+                basepuzzle = new int[50][81];
             }
         }
         return unsolved;
     }
 
-    public boolean valid(int positiontocheck, int valuetocheck){
+    //Check if the value at specified position is currently valid for Sudoku solution.
+    //Returns false if value is found in row, col or block, otherwise return true.
+    public boolean Valid(int positiontocheck, int valuetocheck){
         int[] row = FindRow(positiontocheck);
         for (int i=0; i < row.length; i++){
-            if (unsolved[j][row[i]] == valuetocheck){
+            if (unsolved[puzzleNum][row[i]] == valuetocheck){
                 return false;
             }
         }
 
         int[] col = FindCol(positiontocheck);
         for (int i=0; i < col.length; i++){
-            if (unsolved[j][col[i]] == valuetocheck){
+            if (unsolved[puzzleNum][col[i]] == valuetocheck){
                 return false;
             }
         }
 
         int[] block = FindBlock(positiontocheck);
         for (int i=0; i < block.length; i++){
-            if (unsolved[j][block[i]] == valuetocheck){
+            if (unsolved[puzzleNum][block[i]] == valuetocheck){
                 return false;
             }
         }
         return true;
     }
 
-
+    //Used to find which row current puzzle element is contained in.
+    //Return row array for Valid method to check.
     public int[] FindRow(int currentRow){
         int[] row1 = {0,1,2,3,4,5,6,7,8};
         int[] row2 = {9,10,11,12,13,14,15,16,17};
@@ -98,13 +106,11 @@ public class Solver {
                 return row1;
             }
         }
-
         for (int i=0; i < row2.length; i++){
             if (row2[i] == currentRow){
                 return row2;
             }
         }
-
         for (int i=0; i < row3.length; i++){
             if (row3[i] == currentRow){
                 return row3;
@@ -153,6 +159,7 @@ public class Solver {
         int[] col7 = {6,15,24,33,42,51,60,69,78};
         int[] col8 = {7,16,25,34,43,52,61,70,79};
         int[] col9 = {8,17,26,35,44,53,62,71,80};
+
         for (int i=0; i < col1.length; i++){
             if (col1[i] == currentCol){
                 return col1;
@@ -211,6 +218,7 @@ public class Solver {
         int[] block7 = {54,55,56,63,64,65,72,73,74};
         int[] block8 = {57,58,59,66,67,68,75,76,77};
         int[] block9 = {60,61,62,69,70,71,78,79,80};
+
         for (int i=0; i < block1.length; i++){
             if (block1[i] == currentBlock){
                 return block1;

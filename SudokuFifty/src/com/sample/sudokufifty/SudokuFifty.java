@@ -5,23 +5,26 @@ import java.io.IOException;
 public class SudokuFifty {
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Hello, World!");
-
-        String file_name = "C:/sudokuList.txt";
-
+        String filename = "C:/sudokuList.txt";
 
         try {
-            ReadFile file = new ReadFile(file_name);
+            ReadFile file = new ReadFile(filename);
             int[][] outLines = file.OpenFile();
 
             Solver fifty = new Solver(outLines);
             int[][] solvedPuzzles = fifty.SolvePuzzle();
 
-            System.out.println(solvedPuzzles[0][2]+solvedPuzzles[1][0]);
+            //Output solution to Project Euler Problem 96, Summation of all 3 digit numbers found in the top left corner
+            //of all 50 solved Sudoku puzzles.
+            int total = 0;
+            for (int c = 0; c < 50; c++){
+                int subtotal = Integer.valueOf(String.valueOf(solvedPuzzles[c][0])+ String.valueOf(solvedPuzzles[c][1])+ String.valueOf(solvedPuzzles[c][2]));
+                total = total + subtotal;
+            }
+            System.out.println("The sum of the 3 digit number in the top left corner for all 50 puzzles is: " + total);
 
-            int i, j;
-            for (i = 0; i < outLines.length; i++) {
-                for (j = 0; j < 81; j++) {
+            for (int i = 0; i < outLines.length; i++) {
+                for (int j = 0; j < 81; j++) {
                     System.out.print(outLines[i][j]);
                 }
                 System.out.println();
